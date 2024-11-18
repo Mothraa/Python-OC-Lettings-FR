@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
                 ),
                 migrations.AlterModelTable(
                     name='Profile',
-                    table='profils_profile',
+                    table='profiles_profile',
                 ),
             ],
         ),
