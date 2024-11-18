@@ -15,6 +15,8 @@ class Address(models.Model):
 
     class Meta:
         managed = False
+        # verbose_name = "adresse"
+        verbose_name_plural = "adresses"
     # class Meta:
     #     db_table = 'oc_lettings_site_address'
 
