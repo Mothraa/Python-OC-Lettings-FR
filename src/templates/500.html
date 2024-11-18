@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error (500){% endblock %}
+
+{% block content %}
+
+<div class="container px-5 py-5 text-center">
+    <div class="justify-content-center">
+        <h1>Server Error (500)</h1>
+        <p>Internal server error</p>
+        <a
+            class="btn fw-500 ms-lg-4 btn-primary px-10"
+            href="{% url 'index'%}"
+        >
+        Home
+        </a>
+    </div>
+</div>
+{% endblock %}
