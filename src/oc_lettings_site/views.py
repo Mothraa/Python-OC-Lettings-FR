@@ -3,6 +3,7 @@ oc_lettings_site/views.py
 Contains the Django views for rendering the home page and custom error pages.
 """
 from django.shortcuts import render
+# from django.conf import settings
 
 
 # Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -52,4 +53,7 @@ def custom_500(request):
     Returns:
         HttpResponse: The rendered 500 error page with a 500 status code
     """
+    print("=== Entering custom_500 handler ===")
+    print("Request path:", request.path)
+    print("Request method:", request.method)
     return render(request, "500.html", status=500)
