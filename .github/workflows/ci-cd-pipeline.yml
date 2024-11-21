@@ -64,9 +64,6 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/oc-lettings-site:${{ github.sha }} .
           docker tag ${{ secrets.DOCKER_USERNAME }}/oc-lettings-site:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/oc-lettings-site:latest
 
-      - name: Verify Docker Image Exists
-        run: docker images
-
       # connexion à Docker Hub
       - name: Login to Docker Hub
         if: success()
