@@ -1,0 +1,23 @@
+# Fichiers Python & cache
+*.pyc
+__pycache__/
+.pytest_cache/
+
+# Répertoires de développement
+.git/
+.github/
+.vscode/
+tests/
+docs/
+htmlcov/
+
+# Environnements virtuels
+venv/
+.venv/
+
+# Fichiers sensibles
+.env
+*.env
+
+# Divers
+README.md
