@@ -16,8 +16,10 @@ def test_profiles_index_view(client, monkeypatch):
     # Mocking Profile.objects.all() to return fake profiles
     def fake_all_profiles():
         fake_profiles = [
-            type("Profile", (), {"user": type("User", (), {"username": "user1"}), "favorite_city": "Paris"}),
-            type("Profile", (), {"user": type("User", (), {"username": "user2"}), "favorite_city": "London"}),
+            type("Profile", (), {"user": type("User", (), {"username": "user1"}),
+                                 "favorite_city": "Paris"}),
+            type("Profile", (), {"user": type("User", (), {"username": "user2"}),
+                                 "favorite_city": "London"}),
         ]
         return fake_profiles
     monkeypatch.setattr("profiles.models.Profile.objects.all", fake_all_profiles)

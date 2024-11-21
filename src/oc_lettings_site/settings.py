@@ -21,7 +21,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "t", "yes", "y"]  # "conversion" en bool
+# "conversion" de str en bool de la valeur de DEBUG.
+DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "t", "yes", "y"]
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
@@ -45,7 +46,8 @@ if SENTRY_DSN:
                     django.db.models.signals.post_init,
                 ],
                 cache_spans=False,  # pour tracer les opérations de cache
-                http_methods_to_capture=("GET", "POST", "DELETE",),  # ("CONNECT", "PATCH", "POST", "PUT", "TRACE")
+                # ("CONNECT", "PATCH", "POST", "PUT", "TRACE")
+                http_methods_to_capture=("GET", "POST", "DELETE",),
             ),
             LoggingIntegration(
                 level="DEBUG",  # on capture tous les logs (DEBUG, INFO, WARNING, ERROR, CRITICAL)
@@ -134,7 +136,8 @@ ENV_DJANGO = os.getenv("ENV", "development")
 #     DATABASES = {
 #         'default': {
 #             'ENGINE': 'django.db.backends.sqlite3',
-#             'NAME': os.path.join(BASE_DIR, os.getenv("DEV_DATABASE_PATH", "oc-lettings-site.sqlite3")),
+#             'NAME': os.path.join(BASE_DIR, os.getenv("DEV_DATABASE_PATH",
+#                                           "oc-lettings-site.sqlite3")),
 #         }
 #     }
 
