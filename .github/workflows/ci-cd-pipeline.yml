@@ -91,7 +91,7 @@ jobs:
         run: |
           APP_URL="https://oc-lettings-site-fr48.onrender.com/health/"
           MAX_RETRIES=3
-          RETRY_DELAY=10
+          RETRY_DELAY=60
 
           for i in $(seq 1 $MAX_RETRIES); do
             STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" $APP_URL)
