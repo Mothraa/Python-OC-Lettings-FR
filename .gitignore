@@ -47,13 +47,12 @@ log/
 .coveragerc
 htmlcov/
 .pytest_cache/
-assets/
 
 # media
 media/
 
 # databases
-*.sqlite3
+# *.sqlite3
 
 # flask
 .flaskenv
