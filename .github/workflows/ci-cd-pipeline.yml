@@ -81,13 +81,10 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/oc-lettings-site:latest
 
       # deployement sur Render
-      # https://github.com/marketplace/actions/render-deploy-action
       - name: Deploy to Render
         if: success()
-        uses: johnbeynon/render-deploy-action@v0.0.8
-        with:
-          service-id: ${{ secrets.RENDER_SERVICE_ID }}
-          api-key: ${{ secrets.RENDER_API_KEY }}
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
 
       # On verifie l'accès (endpoint /health), 3 essais
       - name: Check Health Endpoint
