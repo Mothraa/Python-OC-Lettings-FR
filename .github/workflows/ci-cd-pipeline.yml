@@ -34,6 +34,8 @@ jobs:
       # Tests (pytest) et coverage
       - name: Run Tests and coverage
         id: coverage
+        env:
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         run: |
           coverage run --source=src -m pytest
           coverage report
