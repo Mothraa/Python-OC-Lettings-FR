@@ -92,7 +92,7 @@ jobs:
       # On verifie l'accès (endpoint /health), 3 essais
       - name: Check Health Endpoint
         run: |
-          APP_URL="https://<votre-url>.onrender.com/health/"
+          APP_URL="https://oc-lettings-site-fr48.onrender.com/health/"
           MAX_RETRIES=3
           RETRY_DELAY=10
 
