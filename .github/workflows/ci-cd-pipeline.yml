@@ -60,7 +60,12 @@ jobs:
       # Construire l'image Docker si les tests réussissent
       - name: Build Docker Image
         if: success()
-        run: docker build -t mattmatt78/oc-lettings-site:${{ github.sha }} .
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/oc-lettings-site:${{ github.sha }} .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/oc-lettings-site:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/oc-lettings-site:latest
+
+      - name: Verify Docker Image Exists
+        run: docker images
 
       # connexion à Docker Hub
       - name: Login to Docker Hub
@@ -71,11 +76,12 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       # pousser l'image sur Docker Hub
+      # on pousse 2 versions pour la tracabilité (garder le hash)
       - name: Push Docker Image
         if: success()
         run: |
-          docker tag mothraa/oc-lettings-site:${{ github.sha }} mattmatt78/oc-lettings-site:latest
-          docker push mothraa/oc-lettings-site:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/oc-lettings-site:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/oc-lettings-site:latest
 
       # deployement sur Render
       # https://github.com/marketplace/actions/render-deploy-action
