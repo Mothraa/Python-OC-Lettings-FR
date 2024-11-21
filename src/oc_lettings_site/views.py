@@ -3,7 +3,7 @@ oc_lettings_site/views.py
 Contains the Django views for rendering the home page and custom error pages.
 """
 from django.shortcuts import render
-# from django.conf import settings
+from django.http import JsonResponse
 
 
 # Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -28,6 +28,20 @@ def index(request):
     return render(request, 'oc_lettings_site/index.html')
 
 
+def health(request):
+    """
+    Health check view for testing deploiement
+
+    Args:
+        request (HttpRequest): HTTP request object
+
+    Returns:
+        JsonResponse: Json response with status code 200
+    """
+    # TODO : add db connect try
+    return JsonResponse({"status": "ok"}, status=200)
+
+
 def custom_404(request, exception):
     """
     Handling custom 404 error page
@@ -39,7 +53,6 @@ def custom_404(request, exception):
     Returns:
         HttpResponse: The rendered 404 error page with a 404 status code
     """
-    # TODO handle exception with sentry
     return render(request, "404.html", status=404)
 
 
