@@ -3,7 +3,9 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv  # python-dotenv
 import sentry_sdk  # sentry-sdk
+from sentry_sdk.integrations.logging import LoggingIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
+import django.db.models.signals
 
 load_dotenv(override=True)
 
@@ -19,8 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = os.getenv("DEBUG")
-DEBUG = False
+DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "t", "yes", "y"]  # "conversion" en bool
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
@@ -30,14 +31,44 @@ ALLOWED_HOSTS = [
 # Sentry init
 SENTRY_DSN = os.getenv("SENTRY_DSN")
 
-# if SENTRY_DSN:
-#     sentry_sdk.init(
-#         dsn=SENTRY_DSN,
-#         integrations=[DjangoIntegration()],
-#         traces_sample_rate=1.0,
-#         send_default_pii=True,  # allow send personnal informations !
-#         debug=DEBUG,
-#     )
+if SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[
+            DjangoIntegration(
+                # enable_tracing=False,  # tracing de performance
+                transaction_style="url",  # "function_name"
+                middleware_spans=True,  # pour tracer les perfs du middleware
+                signals_spans=True,  # pour tracer les signaux (ex: pre_save, post_save)
+                signals_denylist=[  # pour exclure des signaux du tracage
+                    django.db.models.signals.pre_init,
+                    django.db.models.signals.post_init,
+                ],
+                cache_spans=False,  # pour tracer les opérations de cache
+                http_methods_to_capture=("GET", "POST", "DELETE",),  # ("CONNECT", "PATCH", "POST", "PUT", "TRACE")
+            ),
+            LoggingIntegration(
+                level="DEBUG",  # on capture tous les logs (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+                event_level="ERROR",  # Niveau minimum envoyé en évenement Sentry
+            )
+        ],
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for tracing.
+        traces_sample_rate=1.0,
+        # Set profiles_sample_rate to 1.0 to profile 100%
+        # of sampled transactions.
+        # We recommend adjusting this value in production.
+        profiles_sample_rate=1.0,
+        send_default_pii=True,  # allow send personnal informations !
+        debug=os.getenv("SENTRY_DEBUG", "False").lower() in ["true", "1", "t", "yes", "y"]
+        # experiments desactivé pour la prod
+        # _experiments={
+        #     # Set continuous_profiling_auto_start to True
+        #     # to automatically start the profiler on when
+        #     # possible.
+        #     "continuous_profiling_auto_start": True,
+        # },
+    )
 
 # Application definition
 
@@ -55,6 +86,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -86,6 +118,25 @@ WSGI_APPLICATION = 'oc_lettings_site.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+
+
+ENV_DJANGO = os.getenv("ENV", "development")
+
+# désactivé car base ajoutée dans repo github et via un volume persistant sur le serveur
+# if ENV_DJANGO == "production":
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.sqlite3",
+#             "NAME": os.getenv("PROD_DATABASE_PATH", "xxxxxx"),
+#         }
+#     }
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': os.path.join(BASE_DIR, os.getenv("DEV_DATABASE_PATH", "oc-lettings-site.sqlite3")),
+#         }
+#     }
 
 DATABASES = {
     'default': {
@@ -136,6 +187,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "oc_lettings_site/static",]
 
+# pour la compression et la mise en cache
+if ENV_DJANGO == "production":
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -143,9 +198,20 @@ LOGGING = {
         'console': {
             'class': 'logging.StreamHandler',
         },
+        "sentry": {
+            "level": "DEBUG",
+            "class": "sentry_sdk.integrations.logging.EventHandler",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "sentry"],
+            "level": "INFO",  # "WARNING",
+            "propagate": False,  # pour ne pas propager le log a la racine
+        },
     },
     'root': {
         'handlers': ['console'],
-        'level': 'DEBUG',
-    },
+        'level': 'INFO',
+    }
 }
