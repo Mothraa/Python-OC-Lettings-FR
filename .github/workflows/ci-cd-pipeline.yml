@@ -1,0 +1,107 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # checkout du code source
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # param Python
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      # install des dépendances
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Linting
+      - name: Run Flake8 Linting
+        run: |
+          flake8 src/
+
+      # Tests (pytest) et coverage
+      - name: Run Tests and coverage
+        id: coverage
+        run: |
+          coverage run --source=src -m pytest
+          coverage report
+          coverage html
+          coverage xml
+          coverage report --fail-under=80
+
+      # publie le rapport HTML de couverture en tant qu'artefacte
+      - name: upload Coverage Report
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-html
+          path: htmlcov/
+
+      # vérification du seuil de coverage
+      - name: Check Coverage > 80%
+        if: failure()
+        run: echo "Pipeline stopped due to coverage under 80%"
+        continue-on-error: false
+
+      # Construire l'image Docker si les tests réussissent
+      - name: Build Docker Image
+        if: success()
+        run: docker build -t mattmatt78/oc-lettings-site:${{ github.sha }} .
+
+      # connexion à Docker Hub
+      - name: Login to Docker Hub
+        if: success()
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # pousser l'image sur Docker Hub
+      - name: Push Docker Image
+        if: success()
+        run: |
+          docker tag mothraa/oc-lettings-site:${{ github.sha }} mattmatt78/oc-lettings-site:latest
+          docker push mothraa/oc-lettings-site:latest
+
+      # deployement sur Render
+      # https://github.com/marketplace/actions/render-deploy-action
+      - name: Deploy to Render
+        if: success()
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: ${{ secrets.RENDER_SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
+          wait-for-success: true
+
+      # On verifie l'accès (endpoint /health), 3 essais
+      - name: Check Health Endpoint
+        run: |
+          APP_URL="https://<votre-url>.onrender.com/health/"
+          MAX_RETRIES=3
+          RETRY_DELAY=10
+
+          for i in $(seq 1 $MAX_RETRIES); do
+            STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" $APP_URL)
+            if [ "$STATUS_CODE" -eq 200 ]; then
+              echo "Health check passed on attempt #$i with status code $STATUS_CODE"
+              exit 0
+            else
+              echo "Health check failed on attempt #$i with status code $STATUS_CODE. Retrying in $RETRY_DELAY seconds..."
+              sleep $RETRY_DELAY
+            fi
+          done
+
+          echo "Health check failed after $MAX_RETRIES attempts"
+          exit 1
