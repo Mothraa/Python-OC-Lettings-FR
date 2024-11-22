@@ -43,7 +43,7 @@ jobs:
           coverage xml
           coverage report --fail-under=80
 
-      # publie le rapport HTML de couverture en tant qu'artefacte
+      # publication du rapport coverage HTML en tant qu'artefact
       - name: upload Coverage Report
         if: success()
         uses: actions/upload-artifact@v3
@@ -56,6 +56,31 @@ jobs:
         if: failure()
         run: echo "Pipeline stopped due to coverage under 80%"
         continue-on-error: false
+
+      # Generation de la doc avec Sphinx
+      - name: Build Documentation with Sphinx
+        run: |
+          pip install -r docs/requirements.txt
+          sphinx-apidoc -o docs/source/ src/ --no-toc -f "**/migrations/**" "**/tests/**" "*manage*"
+          sphinx-build -b html docs/source/ docs/_build/html
+
+      # publication de la documentation (artefact)
+      - name: Upload Documentation
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: sphinx-docs
+          path: docs/_build/html/
+
+      # Publication de la documentation sur Read the Docs
+      - name: Init Read the Docs Build
+        env:
+          READTHEDOCS_API_TOKEN: ${{ secrets.READTHEDOCS_API_TOKEN }}
+        run: |
+          curl -X POST \
+            -H "Authorization: Token $READTHEDOCS_API_TOKEN" \
+            -d '{"branch": "main"}'
+            https://readthedocs.org/api/v3/projects/${{ secrets.READTHEDOC_PROJECT_NAME }}/versions/main/builds/
 
       # Construire l'image Docker si les tests réussissent
       - name: Build Docker Image
