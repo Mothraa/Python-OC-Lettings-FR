@@ -59,3 +59,8 @@ media/
 
 # app tokens
 tokens.yaml
+
+# Sphinx
+/docs/_build/
+*.rst
+!index.rst
