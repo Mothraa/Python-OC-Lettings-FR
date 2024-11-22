@@ -4,12 +4,14 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 import os
 import sys
-import django
+from dependency import load_django
+
 sys.path.insert(0, os.path.abspath('../../src'))  # repertoire du code source
 
-# Initialiser Django nécessaire (pour autodoc qui va voir les heritages de modele par ex.)
-os.environ["DJANGO_SETTINGS_MODULE"] = "oc_lettings_site.settings"
-django.setup()
+# Initialiser Django si nécessaire (pour sphinx autodoc
+# qui va voir les heritages de modele par ex.).
+# Desactivé pour readthedoc (variable d'env : SKIP_DJANGO==1)
+load_django()
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -24,7 +26,7 @@ author = 'Mothraa'
 extensions = [
               "sphinx.ext.viewcode",  # permet de faire le lien avec le code source
               "sphinx.ext.autodoc",  # génération auto de la doc
-            #   "sphinx.ext.napoleon",  # pour le format docstrings google
+              # "sphinx.ext.napoleon",  # pour le format docstrings google
               "sphinx_rtd_theme",  # theme "readthedoc"
 ]
 
