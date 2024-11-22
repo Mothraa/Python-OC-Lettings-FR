@@ -10,10 +10,10 @@ build:
   os: ubuntu-24.04
   tools:
     python: "3.12"
-  commands:
+  jobs:
     # generation des fichiers .rst
-    - sphinx-apidoc -o docs/source/ src/ --no-toc "**/migrations/**" "**/tests/**" "*manage*"
-
+    pre_build:
+     - sphinx-apidoc -o docs/source/ src/ --no-toc "**/migrations/**" "**/tests/**" "*manage*"
 
 # Build documentation in the "docs/" directory with Sphinx
 sphinx:
