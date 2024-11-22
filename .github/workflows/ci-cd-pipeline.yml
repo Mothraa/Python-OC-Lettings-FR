@@ -86,8 +86,11 @@ jobs:
       - name: Build Docker Image
         if: success()
         run: |
-          docker build -t ${{ vars.DOCKER_USERNAME }}/oc-lettings-site:${{ github.sha }} .
-          docker tag ${{ vars.DOCKER_USERNAME }}/oc-lettings-site:${{ github.sha }} ${{ vars.DOCKER_USERNAME }}/oc-lettings-site:latest
+          docker build -t ${{ vars.DOCKERHUB_USERNAME }}/oc-lettings-site:${{ github.sha }} .
+          docker tag ${{ vars.DOCKERHUB_USERNAME }}/oc-lettings-site:${{ github.sha }} ${{ vars.DOCKERHUB_USERNAME }}/oc-lettings-site:latest
+
+          docker build -t ${{ vars.DOCKERHUB_USERNAME }}/oc-lettings-site:${{ github.sha }} .
+          docker tag ${{ vars.DOCKERHUB_USERNAME }}/oc-lettings-site:${{ github.sha }} ${{ vars.DOCKERHUB_USERNAME }}/oc-lettings-site:latest
 
       # connexion à Docker Hub
       - name: Login to Docker Hub
