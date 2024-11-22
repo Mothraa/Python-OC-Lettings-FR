@@ -27,7 +27,7 @@ DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "t", "yes", "y"]
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "oc-lettings-site-hlhz.onrender.com",
+    os.getenv("RENDER_URL"),
 ]
 
 # Sentry init
