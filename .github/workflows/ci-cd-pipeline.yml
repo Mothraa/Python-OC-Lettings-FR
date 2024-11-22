@@ -105,8 +105,8 @@ jobs:
       - name: Push Docker Image
         if: success()
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/oc-lettings-site:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/oc-lettings-site:latest
+          docker push ${{ vars.DOCKERHUB_USERNAME }}/oc-lettings-site:${{ github.sha }}
+          docker push ${{ vars.DOCKERHUB_USERNAME }}/oc-lettings-site:latest
 
       # deployement sur Render
       - name: Deploy to Render
