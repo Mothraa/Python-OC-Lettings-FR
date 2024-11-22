@@ -52,4 +52,5 @@ autodoc_default_options = {
     'members': True,
     'undoc-members': False,
     'inherited-members': False,
+    'exclude-members': 'admin, apps, asgi, wsgi',
 }
