@@ -26,7 +26,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Linting
+      # Linting (flake8)
       - name: Run Flake8 Linting
         run: |
           flake8 src/
@@ -59,6 +59,8 @@ jobs:
 
       # Generation de la doc avec Sphinx
       - name: Build Documentation with Sphinx
+        env:
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         run: |
           pip install -r docs/requirements.txt
           sphinx-apidoc -o docs/source/ src/ --no-toc -f "**/migrations/**" "**/tests/**" "*manage*"
