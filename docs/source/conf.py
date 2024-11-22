@@ -4,9 +4,12 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 import os
 import sys
-from dependency import load_django
 
 sys.path.insert(0, os.path.abspath('../../src'))  # repertoire du code source
+sys.path.insert(0, os.path.abspath('.'))  # ajout du repertoire courant
+
+from dependency import load_django  # noqa: E402
+
 
 # Initialiser Django si nécessaire (pour sphinx autodoc
 # qui va voir les heritages de modele par ex.).
