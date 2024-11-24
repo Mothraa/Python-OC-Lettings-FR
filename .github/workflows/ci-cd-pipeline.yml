@@ -3,8 +3,9 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      # - main
-      - bug/doc-generation # for debugging
+      - main
+      - bug/sonar # for debugging
+
 
 jobs:
   build-test-deploy:
