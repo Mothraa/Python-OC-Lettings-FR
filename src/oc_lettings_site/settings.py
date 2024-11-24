@@ -193,8 +193,8 @@ STATICFILES_DIRS = [BASE_DIR / "oc_lettings_site/static",]
 
 # pour la compression et la mise en cache
 if ENV_DJANGO == "production":
-    # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    # STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 LOGGING = {
     'version': 1,
