@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - bug/sonar # for debugging
+      - bug/sonar # for debugging !
 
 
 jobs:
