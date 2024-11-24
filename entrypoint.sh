@@ -1,5 +1,7 @@
 #!/bin/sh
-set -e  # on arrete le script en cas d'erreur
+# TODO desactivé car erreurs avec static manquants mais ref dans le css (bg-waves.svg)
+# set -e  # on arrete le script en cas d'erreur
+
 echo "Apply database migrations..."
 python src/manage.py migrate --noinput
 
