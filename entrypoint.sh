@@ -1,11 +1,11 @@
 #!/bin/sh
 set -e  # on arrete le script en cas d'erreur
 echo "Apply database migrations..."
-python manage.py migrate --noinput
+python src/manage.py migrate --noinput
 
 # On lance collectstatic (regroupe les static dans un rep unique)
 echo "collect static files..."
-python manage.py collectstatic --noinput --verbosity 2
+python src/manage.py collectstatic --noinput --verbosity 2
 
 # TODO param a mettre en variable d'env
 echo "Start Gunicorn..."
