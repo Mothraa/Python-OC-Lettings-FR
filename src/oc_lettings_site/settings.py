@@ -38,7 +38,6 @@ if SENTRY_DSN:
         dsn=SENTRY_DSN,
         integrations=[
             DjangoIntegration(
-                # enable_tracing=False,  # tracing de performance
                 transaction_style="url",  # "function_name"
                 middleware_spans=True,  # pour tracer les perfs du middleware
                 signals_spans=True,  # pour tracer les signaux (ex: pre_save, post_save)
@@ -47,8 +46,7 @@ if SENTRY_DSN:
                     django.db.models.signals.post_init,
                 ],
                 cache_spans=False,  # pour tracer les opérations de cache
-                # ("CONNECT", "PATCH", "POST", "PUT", "TRACE")
-                http_methods_to_capture=("GET", "POST", "DELETE",),
+                http_methods_to_capture=("CONNECT", "GET", "POST", "DELETE",),
             ),
             LoggingIntegration(
                 level="DEBUG",  # on capture tous les logs (DEBUG, INFO, WARNING, ERROR, CRITICAL)
@@ -118,29 +116,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'oc_lettings_site.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-
-ENV_DJANGO = os.getenv("ENV", "development")
-
-# désactivé car base ajoutée dans repo github et via un volume persistant sur le serveur
-# if ENV_DJANGO == "production":
-#     DATABASES = {
-#         "default": {
-#             "ENGINE": "django.db.backends.sqlite3",
-#             "NAME": os.getenv("PROD_DATABASE_PATH", "xxxxxx"),
-#         }
-#     }
-# else:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.sqlite3',
-#             'NAME': os.path.join(BASE_DIR, os.getenv("DEV_DATABASE_PATH",
-#                                           "oc-lettings-site.sqlite3")),
-#         }
-#     }
 
 DATABASES = {
     'default': {
@@ -192,9 +169,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "oc_lettings_site/static",]
 
 # pour la compression et la mise en cache
+ENV_DJANGO = os.getenv("ENV", "development")
+
 if ENV_DJANGO == "production":
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    # STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 LOGGING = {
     'version': 1,
