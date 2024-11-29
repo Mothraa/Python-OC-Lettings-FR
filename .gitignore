@@ -64,3 +64,9 @@ tokens.yaml
 /docs/_build/
 *.rst
 !index.rst
+!introduction.rst
+!installation.rst
+!quickstart.rst
+!user_guide.rst
+!technical_doc.rst
+!deployement.rst
