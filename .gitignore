@@ -50,6 +50,7 @@ htmlcov/
 
 # media
 media/
+src/staticfiles/
 
 # databases
 # *.sqlite3

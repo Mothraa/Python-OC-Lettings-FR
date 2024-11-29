@@ -173,6 +173,8 @@ ENV_DJANGO = os.getenv("ENV", "development")
 
 if ENV_DJANGO == "production":
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 LOGGING = {
     'version': 1,
