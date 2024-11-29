@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-      - bug/sonar # for debugging !
-
 
 jobs:
   build-test-deploy:
@@ -113,13 +111,10 @@ jobs:
         run: |
           curl -X POST -H "Authorization: Token $READTHEDOCS_API_TOKEN" -d '{"branch": "main"}' https://readthedocs.org/api/v3/projects/${{ secrets.READTHEDOC_PROJECT_NAME }}/versions/main/builds/
 
-      # Construire l'image Docker si les tests réussissent
+      # Construction de l'image Docker si les tests OK
       - name: Build Docker Image
         if: success()
         run: |
-          docker build -t ${{ vars.DOCKERHUB_USERNAME }}/oc-lettings-site:${{ github.sha }} .
-          docker tag ${{ vars.DOCKERHUB_USERNAME }}/oc-lettings-site:${{ github.sha }} ${{ vars.DOCKERHUB_USERNAME }}/oc-lettings-site:latest
-
           docker build -t ${{ vars.DOCKERHUB_USERNAME }}/oc-lettings-site:${{ github.sha }} .
           docker tag ${{ vars.DOCKERHUB_USERNAME }}/oc-lettings-site:${{ github.sha }} ${{ vars.DOCKERHUB_USERNAME }}/oc-lettings-site:latest
 
