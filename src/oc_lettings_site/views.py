@@ -8,6 +8,8 @@ from django.shortcuts import render
 from django.http import JsonResponse
 
 logger = logging.getLogger(__name__)
+
+
 # Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 # Quisque molestie quam lobortis leo consectetur ullamcorper non id est.
 # Praesent dictum, nulla eget feugiat sagittis, sem mi convallis eros,
@@ -27,7 +29,6 @@ def index(request):
     Returns:
         HttpResponse: The rendered home page (index.html)
     """
-    logger.info('Home page "index.html" accessed.')
     return render(request, 'oc_lettings_site/index.html')
 
 
