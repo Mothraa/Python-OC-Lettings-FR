@@ -50,7 +50,7 @@ if SENTRY_DSN:
             ),
             LoggingIntegration(
                 level="DEBUG",  # on capture tous les logs (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-                event_level="ERROR",  # Niveau minimum envoyé en évenement Sentry
+                event_level="INFO",  # Niveau minimum envoyé en évenement Sentry
             )
         ],
         # Set traces_sample_rate to 1.0 to capture 100%
